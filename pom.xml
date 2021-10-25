@@ -2,14 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
     <name>supermarket</name>
     <groupId>net.gilbert.chris</groupId>
-    <artifactId>supermarket</artifactId>
+    <artifactId>checkout</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <description>TODO</description>
+    <description>Kata that represents the checkout process in a supermarket</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.5.21</kotlin.version>
-        <maven.compiler.source>1.11</maven.compiler.source>
-        <maven.compiler.target>1.11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -85,6 +85,9 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                            </sourceDirs>
                             <args>
                                 <arg>-Xjvm-default=compatibility</arg>
                             </args>
@@ -100,8 +103,19 @@
                 </executions>
                 <configuration>
                     <jvmTarget>11</jvmTarget>
+                    <compilerPlugins>
+                        <plugin>all-open</plugin>
+                    </compilerPlugins>
+                    <pluginOptions>
+                        <option>all-open:annotation=net.gilbert.chris.checkout.annotation.VisibleForTesting</option>
+                    </pluginOptions>
                 </configuration>
                 <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-allopen</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-noarg</artifactId>

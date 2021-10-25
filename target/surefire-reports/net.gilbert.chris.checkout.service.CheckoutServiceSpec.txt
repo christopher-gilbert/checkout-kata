@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: net.gilbert.chris.checkout.service.CheckoutServiceSpec
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.533 s <<< FAILURE! - in net.gilbert.chris.checkout.service.CheckoutServiceSpec
+Start a new checkout(net.gilbert.chris.checkout.service.CheckoutServiceSpec)  Time elapsed: 0.179 s  <<< ERROR!
+org.spockframework.mock.CannotCreateMockException: Cannot create mock for class net.gilbert.chris.checkout.repository.SpecialOfferRepository because Java mocks cannot mock final classes. If the code under test is written in Groovy, use a Groovy mock.
+	at net.gilbert.chris.checkout.service.CheckoutServiceSpec.Start a new checkout(CheckoutServiceSpec.groovy:19)
+
+Empty basket - known item scanned(net.gilbert.chris.checkout.service.CheckoutServiceSpec)  Time elapsed: 0.001 s  <<< ERROR!
+org.spockframework.mock.CannotCreateMockException: Cannot create mock for class net.gilbert.chris.checkout.domain.PricingRules because Java mocks cannot mock final classes. If the code under test is written in Groovy, use a Groovy mock.
+	at net.gilbert.chris.checkout.service.CheckoutServiceSpec.Empty basket - known item scanned(CheckoutServiceSpec.groovy:38)
+
