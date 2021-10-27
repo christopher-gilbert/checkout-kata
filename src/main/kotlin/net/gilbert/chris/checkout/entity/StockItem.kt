@@ -9,5 +9,5 @@ data class StockItem
      val sku: String,
      val unitPrice: Int): ItemPricing {
 
-        override fun priceOf(quantity: Int): Int  = TODO()
+        override fun priceOf(quantity: Int) = quantity * unitPrice
     }

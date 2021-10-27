@@ -13,8 +13,8 @@ import net.gilbert.chris.checkout.entity.SpecialOffer
  */
 @VisibleForTesting
 data class Basket(
-    val currentPricingRules: PricingRules,
-    val items: List<StockItem> = emptyList()
+    private val currentPricingRules: PricingRules,
+    private val items: List<StockItem> = emptyList()
 ) {
 
     /**
@@ -26,5 +26,7 @@ data class Basket(
      * Provides a summary map of distinct [StockItems][StockItem] to the number of each in the basket.
      */
     fun getSummary() = items.groupingBy { it }.eachCount()
+
+    fun applyPricingRules(stockItem: StockItem) = currentPricingRules.getItemPricing(stockItem)
 
 }

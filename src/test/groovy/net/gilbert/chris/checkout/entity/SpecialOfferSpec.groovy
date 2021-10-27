@@ -1,4 +1,4 @@
-package net.gilbert.chris.checkout.domain
+package net.gilbert.chris.checkout.entity
 
 import net.gilbert.chris.checkout.entity.SpecialOffer
 import net.gilbert.chris.checkout.entity.StockItem

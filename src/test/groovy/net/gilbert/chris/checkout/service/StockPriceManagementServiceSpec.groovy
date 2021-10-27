@@ -21,7 +21,7 @@ class StockPriceManagementServiceSpec extends Specification {
     }
 
     def "Add a special offer to an unknown item"() {
-        
+
     }
 
 

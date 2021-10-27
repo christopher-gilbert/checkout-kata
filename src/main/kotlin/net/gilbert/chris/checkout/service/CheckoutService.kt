@@ -32,7 +32,7 @@ class CheckoutService(
 
 
     /**
-     * Add the [StockItem] identified by the sku to the [Basket] and return a new [Basket], if the sku
+     * Add the [StockItem] identified by the SKU to the [Basket] and return a new [Basket], if the SKU
      * is valid, else throw [IllegalArgumentException]
      *
      * Note that the [Basket] passed in is not modified - client should work with the returned [Basket].
@@ -44,11 +44,12 @@ class CheckoutService(
     fun calculateTotalPrice(basket: Basket) =
         basket
             .getSummary()
-            .mapKeys { (item) -> basket.currentPricingRules.getItemPricing(item) }
+            .mapKeys { (item) -> basket.applyPricingRules(item) }
             .map { (itemPricing, quantity) ->
                 itemPricing.priceOf(quantity)
             }
             .sum()
+
 
     private fun getCurrentPricingRules() =
         PricingRules(specialOfferRepository.getCurrentSpecialOffers())
