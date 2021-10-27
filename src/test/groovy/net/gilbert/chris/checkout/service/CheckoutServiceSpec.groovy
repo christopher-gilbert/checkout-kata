@@ -15,18 +15,17 @@ class CheckoutServiceSpec extends Specification {
         given: 'a set of special offers'
         def offer1 = Stub(SpecialOffer)
         def offer2 = Stub(SpecialOffer)
-        def pricingRules = new PricingRules([offer1, offer2])
         def specialOfferRepository = Stub(SpecialOfferRepository) {
             it.currentSpecialOffers >> [offer1, offer2]
         }
 
         when: 'a new checkout is started'
-        def result = new CheckoutService(Stub(StockItemRepository), specialOfferRepository)
+        def result = new CheckoutService(Stub(StockItemRepository), specialOfferRepository, Stub(PricingService))
                 .startCheckout()
 
         then: 'an empty basket is created with those special offers'
-        result.currentPricingRules == pricingRules
-        result.items  == []
+        result.currentPricingRules == new PricingRules([offer1, offer2])
+        result.items == []
     }
 
 
@@ -42,7 +41,7 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        def result = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
+        def result = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), Stub(PricingService))
                 .scanItem('SKU', basket)
 
         then: 'the item is added to the basket'
@@ -69,6 +68,18 @@ class CheckoutServiceSpec extends Specification {
         when: 'the SKU is scanned'
 
         then: 'an exception is thrown'
+
+    }
+
+    def "Calculating price of basket"() {
+
+        given: 'a basket containing a mix of items'
+
+        and: 'a set of offers, some of which apply to items in the basket'
+
+        when: 'the price of the basket is calculated'
+
+        then: 'it is as expected'
 
     }
 

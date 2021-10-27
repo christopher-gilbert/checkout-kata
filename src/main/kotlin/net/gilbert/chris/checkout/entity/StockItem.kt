@@ -6,4 +6,7 @@ import net.gilbert.chris.checkout.annotation.VisibleForTesting
 data class StockItem
     (val id: String,
      val sku: String,
-     val unitPrice: Int)
+     val unitPrice: Int) {
+
+        fun priceOf(quantity: Int): Int  = TODO()
+    }

@@ -9,6 +9,7 @@ import net.gilbert.chris.checkout.repository.StockItemRepository
 class CheckoutService(
     private val stockItemRepository: StockItemRepository,
     private val specialOfferRepository: SpecialOfferRepository,
+    private val pricingService: PricingService
 ) {
 
     /**
@@ -26,7 +27,15 @@ class CheckoutService(
     fun scanItem(sku: String, basket: Basket) =
         basket.addItem(requireNotNull(stockItemRepository.findBySku(sku)))
 
+    fun calculateTotalPrice(basket: Basket) =
+        basket
+            .getSummary()
+            .map {
+                pricingService.calculateItemTotal(it.key, it.value, basket.currentPricingRules)
+            }
+            .sum()
 
-    private fun getCurrentPricingRules() = PricingRules(specialOfferRepository.getCurrentSpecialOffers())
+    private fun getCurrentPricingRules() =
+        PricingRules(specialOfferRepository.getCurrentSpecialOffers())
 
 }

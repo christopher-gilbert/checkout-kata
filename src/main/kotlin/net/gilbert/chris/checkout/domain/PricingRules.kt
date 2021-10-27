@@ -13,7 +13,7 @@ data class PricingRules(
     private val currentOffers: List<SpecialOffer>
 ) {
 
-
-    fun totalPrice(stockItem: StockItem, quantity: Int): Int = TODO()
+    fun isOnOffer(stockItem: StockItem) = currentOffers
+        .any { it == stockItem }
 
 }

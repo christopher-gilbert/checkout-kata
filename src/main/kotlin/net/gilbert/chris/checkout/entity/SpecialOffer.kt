@@ -6,7 +6,11 @@ import net.gilbert.chris.checkout.annotation.VisibleForTesting
 data class SpecialOffer(
     val id: String,
     val stockItem: StockItem,
-    val quantity: Int,
+    val bundleQuantity: Int,
     val bundlePrice: Int
 ) {
+
+    fun priceOf(quantity: Int) =
+        ((quantity / bundleQuantity * bundlePrice)
+                + ((quantity % bundleQuantity) * stockItem.unitPrice))
 }
