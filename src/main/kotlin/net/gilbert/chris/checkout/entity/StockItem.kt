@@ -5,7 +5,7 @@ import net.gilbert.chris.checkout.domain.ItemPricing
 
 @VisibleForTesting
 data class StockItem
-    (val id: String,
+    (val id: String? = null,
      val sku: String,
      val unitPrice: Int): ItemPricing {
 
