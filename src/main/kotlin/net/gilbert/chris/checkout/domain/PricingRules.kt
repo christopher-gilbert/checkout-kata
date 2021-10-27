@@ -13,7 +13,13 @@ data class PricingRules(
     private val currentOffers: List<SpecialOffer>
 ) {
 
-    fun isOnOffer(stockItem: StockItem) = currentOffers
-        .any { it == stockItem }
+    /**
+     * Retrieve the [ItemPricing] that enables the total cost for a quantity of the passed in
+     * [StockItem] to be calculated, accounting for any applicable [SpecialOffers][SpecialOffer]
+     */
+    fun getItemPricing(stockItem: StockItem) =
+        currentOffers.find {
+            it == stockItem
+        } ?: stockItem
 
 }

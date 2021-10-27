@@ -20,7 +20,7 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'a new checkout is started'
-        def result = new CheckoutService(Stub(StockItemRepository), specialOfferRepository, Stub(PricingService))
+        def result = new CheckoutService(Stub(StockItemRepository), specialOfferRepository)
                 .startCheckout()
 
         then: 'an empty basket is created with those special offers'
@@ -41,7 +41,7 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        def result = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), Stub(PricingService))
+        def result = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
                 .scanItem('SKU', basket)
 
         then: 'the item is added to the basket'
