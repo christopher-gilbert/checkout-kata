@@ -9,9 +9,9 @@ data class SpecialOffer(
     val stockItem: StockItem,
     val bundleQuantity: Int,
     val bundlePrice: Int
-): ItemPricing {
+) : ItemPricing {
 
     override fun priceOf(quantity: Int) =
         ((quantity / bundleQuantity * bundlePrice)
-                + ((quantity % bundleQuantity) * stockItem.unitPrice))
+                + stockItem.priceOf(quantity % bundleQuantity))
 }

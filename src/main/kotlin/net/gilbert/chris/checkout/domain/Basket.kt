@@ -13,20 +13,24 @@ import net.gilbert.chris.checkout.entity.SpecialOffer
  */
 @VisibleForTesting
 data class Basket(
-    private val currentPricingRules: PricingRules,
+    private val applicablePricingRules: PricingRules,
     private val items: List<StockItem> = emptyList()
 ) {
 
     /**
      * Returns a new [Basket] derived from the existing basket with the new [StockItem] added.
      */
-    fun addItem(stockItem: StockItem) = Basket(this.currentPricingRules, listOf(*items.toTypedArray(), stockItem))
+    fun addItem(stockItem: StockItem) = Basket(this.applicablePricingRules, listOf(*items.toTypedArray(), stockItem))
 
     /**
      * Provides a summary map of distinct [StockItems][StockItem] to the number of each in the basket.
      */
     fun getSummary() = items.groupingBy { it }.eachCount()
 
-    fun applyPricingRules(stockItem: StockItem) = currentPricingRules.getItemPricing(stockItem)
+    /**
+     * Use the [PricingRules] tied to this basket to retrieve the appropriate pricing strategy for the
+     * given [StockItem].
+     */
+    fun applyPricingRules(stockItem: StockItem) = applicablePricingRules.getItemPricing(stockItem)
 
 }
