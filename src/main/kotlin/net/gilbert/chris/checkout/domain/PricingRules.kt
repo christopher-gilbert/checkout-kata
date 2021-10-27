@@ -19,7 +19,7 @@ data class PricingRules(
      */
     fun getItemPricing(stockItem: StockItem) =
         currentOffers.find {
-            it == stockItem
+            it.stockItem == stockItem
         } ?: stockItem
 
 }
