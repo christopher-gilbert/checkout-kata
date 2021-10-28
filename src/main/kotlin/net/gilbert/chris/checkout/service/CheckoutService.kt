@@ -36,6 +36,9 @@ class CheckoutService(
      * is valid, else throw [IllegalArgumentException]
      *
      * Note that the [Basket] passed in is not modified - client should work with the returned [Basket].
+     *
+     * TODO - I'm going to change this to just take in basket ID, then retrieve basket, modify and
+     * store, and return updated version.
      */
     fun scanItem(sku: String, basket: Basket) =
         basket.addItem(requireNotNull(stockItemRepository.findBySku(sku)))

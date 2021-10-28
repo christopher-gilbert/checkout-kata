@@ -10,7 +10,9 @@ import net.gilbert.chris.checkout.entity.SpecialOffer
  * [SpecialOffers][SpecialOffer] are applied.
  *
  * Note that [Baskets][Basket] are immutable.
- */
+ *
+ * TODO will change this to an entity so that it can be persisted between each update (see README for details)
+*/
 @VisibleForTesting
 data class Basket(
     private val applicablePricingRules: PricingRules,
