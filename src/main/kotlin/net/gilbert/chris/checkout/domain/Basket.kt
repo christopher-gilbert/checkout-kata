@@ -20,7 +20,7 @@ data class Basket(
     /**
      * Returns a new [Basket] derived from the existing basket with the new [StockItem] added.
      */
-    fun addItem(stockItem: StockItem) = Basket(this.applicablePricingRules, listOf(*items.toTypedArray(), stockItem))
+    fun addItem(stockItem: StockItem) = this.copy(items = listOf(*items.toTypedArray(), stockItem))
 
     /**
      * Provides a summary map of distinct [StockItems][StockItem] to the number of each in the basket.

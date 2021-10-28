@@ -106,14 +106,8 @@ class CheckoutServiceSpec extends Specification {
     }
 
     def "Calculating price of basket"() {
-
-        given: 'a basket containing a mix of items'
-
-        and: 'a set of offers, some of which apply to items in the basket'
-
-        when: 'the price of the basket is calculated'
-
-        then: 'it is as expected'
+        // as this is wholly dependent on behaviour of collaborators, it is checked by integration test,
+        // rather than stubbing the various interactions, which would tightly couple this test to the implementation
 
     }
 

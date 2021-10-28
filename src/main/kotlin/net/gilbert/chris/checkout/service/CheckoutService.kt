@@ -28,7 +28,7 @@ class CheckoutService(
      * based on the passed in [SpecialOffers][SpecialOffer]. These override any [SpecialOffers][SpecialOffer]
      * that have been previously stored.
      */
-    fun startCheckout(offersToApply: List<SpecialOffer>) = Basket(PricingRules(offersToApply))
+    fun startCheckout(applicableOffers: List<SpecialOffer>) = Basket(PricingRules(applicableOffers))
 
 
     /**
