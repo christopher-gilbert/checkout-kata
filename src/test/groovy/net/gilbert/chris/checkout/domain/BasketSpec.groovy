@@ -1,6 +1,6 @@
 package net.gilbert.chris.checkout.domain
 
-import net.gilbert.chris.checkout.entity.StockItem
+
 import spock.lang.Specification
 
 class BasketSpec extends Specification {
@@ -8,7 +8,7 @@ class BasketSpec extends Specification {
     def "Add item - empty basket"() {
 
         given: 'an empty basket'
-        def basket  = new Basket(Stub(PricingRules), [])
+        def basket = new Basket('id', Stub(PricingRules), [])
 
         when: 'an item is added'
         def item = Stub(StockItem)
@@ -26,7 +26,7 @@ class BasketSpec extends Specification {
 
         given: 'a basket already containing an item'
         def item1 = Stub(StockItem)
-        def basket  = new Basket(Stub(PricingRules), [item1])
+        def basket = new Basket('id', Stub(PricingRules), [item1])
 
         when: 'an item is added'
         def item2 = Stub(StockItem)
@@ -42,9 +42,9 @@ class BasketSpec extends Specification {
 
     def "Summary view of basket"() {
         given: 'a basket containing several items, some identical'
-        def itemType1 = new StockItem(null, 'sku1', 10)
-        def itemType2 = new StockItem(null, 'sku2', 20)
-        def basket  = new Basket(Stub(PricingRules), [itemType1, itemType1, itemType2, itemType1, itemType2, itemType2, itemType1])
+        def itemType1 = new StockItem('id1', 'sku1', 10)
+        def itemType2 = new StockItem('id2', 'sku2', 20)
+        def basket = new Basket('id', Stub(PricingRules), [itemType1, itemType1, itemType2, itemType1, itemType2, itemType2, itemType1])
 
         when: 'a grouped view is requested'
         def summary = basket.getSummary()

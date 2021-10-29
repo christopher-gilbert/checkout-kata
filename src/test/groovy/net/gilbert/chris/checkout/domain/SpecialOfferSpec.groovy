@@ -1,7 +1,7 @@
-package net.gilbert.chris.checkout.entity
+package net.gilbert.chris.checkout.domain
 
-import net.gilbert.chris.checkout.entity.SpecialOffer
-import net.gilbert.chris.checkout.entity.StockItem
+import net.gilbert.chris.checkout.domain.SpecialOffer
+import net.gilbert.chris.checkout.domain.StockItem
 import spock.lang.Specification
 
 class SpecialOfferSpec extends Specification {

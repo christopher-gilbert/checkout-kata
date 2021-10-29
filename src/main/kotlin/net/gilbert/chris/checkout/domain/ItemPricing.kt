@@ -1,7 +1,5 @@
 package net.gilbert.chris.checkout.domain
 
-import net.gilbert.chris.checkout.entity.StockItem
-import net.gilbert.chris.checkout.entity.SpecialOffer
 import net.gilbert.chris.checkout.service.CheckoutService
 
 /**
@@ -11,4 +9,5 @@ import net.gilbert.chris.checkout.service.CheckoutService
 interface ItemPricing {
 
     fun priceOf(quantity: Int): Int
+
 }

@@ -2,8 +2,8 @@ package net.gilbert.chris.checkout.service
 
 import net.gilbert.chris.checkout.domain.Basket
 import net.gilbert.chris.checkout.domain.PricingRules
-import net.gilbert.chris.checkout.entity.SpecialOffer
-import net.gilbert.chris.checkout.entity.StockItem
+import net.gilbert.chris.checkout.domain.SpecialOffer
+import net.gilbert.chris.checkout.domain.StockItem
 import net.gilbert.chris.checkout.repository.SpecialOfferRepository
 import net.gilbert.chris.checkout.repository.StockItemRepository
 import spock.lang.Specification
@@ -57,7 +57,7 @@ class CheckoutServiceSpec extends Specification {
 
         when: 'the SKU is scanned'
         def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .scanItem('SKU', basket)
+                .addItem('SKU', basket)
 
         then: 'the item is added to the basket'
         updatedBasket.items == [item]
@@ -80,7 +80,7 @@ class CheckoutServiceSpec extends Specification {
 
         when: 'the SKU is scanned'
         def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .scanItem('SKU', basket)
+                .addItem('SKU', basket)
 
         then: 'the item is added to the basket'
         updatedBasket.items == [item1, item2, item3]
@@ -98,7 +98,7 @@ class CheckoutServiceSpec extends Specification {
 
         when: 'the SKU is scanned'
         new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .scanItem('SKU', basket)
+                .addItem('SKU', basket)
 
         then: 'an exception is thrown'
         thrown(IllegalArgumentException)

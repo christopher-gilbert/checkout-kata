@@ -1,5 +1,6 @@
-package net.gilbert.chris.checkout.entity
+package net.gilbert.chris.checkout.domain
 
+import net.gilbert.chris.checkout.domain.StockItem
 import spock.lang.Specification
 
 class StockItemSpec extends Specification {

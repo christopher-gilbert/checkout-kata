@@ -1,11 +1,11 @@
-package net.gilbert.chris.checkout.entity
+package net.gilbert.chris.checkout.domain
 
 import net.gilbert.chris.checkout.annotation.VisibleForTesting
-import net.gilbert.chris.checkout.domain.ItemPricing
+import java.util.UUID.randomUUID
 
 @VisibleForTesting
 data class SpecialOffer(
-    val id: String? = null,
+    val id: String = randomUUID().toString(),
     val stockItem: StockItem,
     val bundleQuantity: Int,
     val bundlePrice: Int
@@ -14,4 +14,5 @@ data class SpecialOffer(
     override fun priceOf(quantity: Int) =
         ((quantity / bundleQuantity * bundlePrice)
                 + stockItem.priceOf(quantity % bundleQuantity))
+
 }

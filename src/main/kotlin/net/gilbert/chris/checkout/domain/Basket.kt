@@ -1,8 +1,7 @@
 package net.gilbert.chris.checkout.domain
 
 import net.gilbert.chris.checkout.annotation.VisibleForTesting
-import net.gilbert.chris.checkout.entity.StockItem
-import net.gilbert.chris.checkout.entity.SpecialOffer
+import java.util.UUID.randomUUID
 
 /**
  * Class for managing the state of checked out [StockItems][StockItem] during the checkout process. Each [Basket] is
@@ -12,11 +11,12 @@ import net.gilbert.chris.checkout.entity.SpecialOffer
  * Note that [Baskets][Basket] are immutable.
  *
  * TODO will change this to an entity so that it can be persisted between each update (see README for details)
-*/
+ */
 @VisibleForTesting
 data class Basket(
+    val id: String = randomUUID().toString(),
     private val applicablePricingRules: PricingRules,
-    private val items: List<StockItem> = emptyList()
+    val items: List<StockItem> = emptyList()
 ) {
 
     /**

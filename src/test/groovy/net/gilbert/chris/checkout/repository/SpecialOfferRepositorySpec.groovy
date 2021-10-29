@@ -1,7 +1,7 @@
 package net.gilbert.chris.checkout.repository
 
-import net.gilbert.chris.checkout.entity.SpecialOffer
-import net.gilbert.chris.checkout.entity.StockItem
+import net.gilbert.chris.checkout.domain.SpecialOffer
+import net.gilbert.chris.checkout.domain.StockItem
 import spock.lang.Specification
 
 class SpecialOfferRepositorySpec extends Specification {
@@ -9,16 +9,13 @@ class SpecialOfferRepositorySpec extends Specification {
     def "Store offer, return stored version"() {
 
         given: 'an offer'
-        def offer = new SpecialOffer(null, new StockItem(null, 'sku1', 10), 2, 15)
+        def offer = new SpecialOffer('id1', new StockItem('id2', 'sku1', 10), 2, 15)
 
-        when: 'it is stored'
+        when: 'it is saved'
         def repository = new SpecialOfferRepository([])
         def storedOffer = repository.save(offer)
 
-        then: 'the stored offer has a unique (in the current universe) ID'
-        UUID.fromString(storedOffer.id)
-
-        and: 'it is stored in the database'
+        then: 'it is stored in the database'
         repository.currentSpecialOffers.any { it == storedOffer }
 
     }
@@ -45,8 +42,8 @@ class SpecialOfferRepositorySpec extends Specification {
     def "Retrieve offer by SKU - offer found"() {
 
         given: 'a set of special offers on a number of items'
-        def offer1 = new SpecialOffer(null, new StockItem(null, 'sku1', 10), 2, 15)
-        def offer2 = new SpecialOffer(null, new StockItem(null, 'sku2', 20), 3, 50)
+        def offer1 = new SpecialOffer('id1', new StockItem('id2', 'sku1', 10), 2, 15)
+        def offer2 = new SpecialOffer('id3', new StockItem('id4', 'sku2', 20), 3, 50)
 
         when: 'looking up an offer by one of the item SKUs'
         def result = new SpecialOfferRepository([offer1, offer2]).findOfferForStockItem('sku2')
@@ -59,8 +56,8 @@ class SpecialOfferRepositorySpec extends Specification {
     def "Retrieve offer by SKU - no offer found"() {
 
         given: 'a set of special offers on a number of items'
-        def offer1 = new SpecialOffer(null, new StockItem(null, 'sku1', 10), 2, 15)
-        def offer2 = new SpecialOffer(null, new StockItem(null, 'sku2', 20), 3, 50)
+        def offer1 = new SpecialOffer('id1', new StockItem('id2', 'sku1', 10), 2, 15)
+        def offer2 = new SpecialOffer('id3', new StockItem('id4', 'sku2', 20), 3, 50)
 
         when: 'looking up an offer for a different SKU'
         def result = new SpecialOfferRepository([offer1, offer2]).findOfferForStockItem('sku3')

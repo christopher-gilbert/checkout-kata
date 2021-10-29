@@ -1,7 +1,7 @@
 package net.gilbert.chris.checkout.service
 
-import net.gilbert.chris.checkout.entity.SpecialOffer
-import net.gilbert.chris.checkout.entity.StockItem
+import net.gilbert.chris.checkout.domain.SpecialOffer
+import net.gilbert.chris.checkout.domain.StockItem
 import net.gilbert.chris.checkout.exception.DuplicateItemException
 import net.gilbert.chris.checkout.exception.MissingItemException
 import net.gilbert.chris.checkout.repository.SpecialOfferRepository

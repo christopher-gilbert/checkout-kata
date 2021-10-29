@@ -1,3 +1,3 @@
 package net.gilbert.chris.checkout.exception
 
-class DuplicateItemException(message:String): RuntimeException(message)
+class DuplicateItemException(message: String) : RuntimeException(message)
