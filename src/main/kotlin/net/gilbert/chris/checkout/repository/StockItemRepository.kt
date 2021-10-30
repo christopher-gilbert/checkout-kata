@@ -18,6 +18,9 @@ class StockItemRepository(
         return stockItem
     }
 
+    /**
+     * Return the [StockItem] with the passed in SKU, or null if not found.
+     */
     fun findBySku(sku: String) = stockItems.find {
         it.sku == sku
     }

@@ -52,6 +52,5 @@ class StockPriceManagementService(
             )
         } ?: throw MissingItemException("No stock items exist with sku $stockItemSku")
 
-
     }
 }

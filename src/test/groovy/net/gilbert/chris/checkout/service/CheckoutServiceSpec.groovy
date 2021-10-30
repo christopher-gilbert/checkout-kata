@@ -70,7 +70,7 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        basketRepository.update(basket) >> basket
+        basketRepository.save(basket) >> basket
         def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), basketRepository)
                 .addItem('SKU', 'id1')
 
@@ -98,7 +98,7 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        basketRepository.update(basket) >> basket
+        basketRepository.save(basket) >> basket
         def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), basketRepository)
                 .addItem('SKU', 'id1')
 

@@ -2,10 +2,12 @@ package net.gilbert.chris.checkout.repository
 
 import net.gilbert.chris.checkout.annotation.VisibleForTesting
 import net.gilbert.chris.checkout.domain.SpecialOffer
+import net.gilbert.chris.checkout.domain.StockItem
 
 @VisibleForTesting
-class SpecialOfferRepository
-    (private val currentOffers: MutableList<SpecialOffer> = mutableListOf()) {
+class SpecialOfferRepository(
+    private val currentOffers: MutableList<SpecialOffer> = mutableListOf()
+) {
 
     /**
      * Store the offer, and return the stored version.
@@ -23,5 +25,8 @@ class SpecialOfferRepository
      */
     fun getCurrentSpecialOffers() = currentOffers.toList()
 
+    /**
+     * Return the [SpecialOffer] associated with the [StockItem] with the passed in SKU or null if none is found.
+     */
     fun findOfferForStockItem(sku: String) = currentOffers.find { it.stockItem.sku == sku }
 }

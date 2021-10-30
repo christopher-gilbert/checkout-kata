@@ -35,22 +35,22 @@ class CheckoutService(
         basketRepository.save(Basket(applicablePricingRules = PricingRules(applicableOffers)))
 
     /**
-     * Add the [StockItem] identified by the SKU to the [Basket] and return the updated basket, if the SKU
-     * is valid, else throw [IllegalArgumentException]
+     * Add the [StockItem] identified by the SKU to the [Basket] with the passed in basketId and return the updated
+     * basket, if the basketId and SKU exist, else throw an exception.
      */
     fun addItem(sku: String, basketId: String) =
         basketRepository.findById(basketId)
             ?.addItem(requireNotNull(stockItemRepository.findBySku(sku)))
-            ?.let { basketRepository.update(it) }
+            ?.let { basketRepository.save(it) }
             ?: throw MissingItemException("basket with ID $basketId does not exist")
 
 
     /**
-     * Calculates a total price for all the [StockItems]][StockItem] in the [Basket] in pence, accounting
+     * Calculate a total price for all the [StockItems][StockItem] in the [Basket] in pence, accounting
      * for any [SpecialOffers][SpecialOffer] that are applicable to the items based on the set of offers
      * associated with the basket at the start of checkout.
      *
-     * WARNING - this assumes that each type of item in the basket has a unique pricing strategy
+     * WARNING - this assumes that each type of item in the basket has a unique pricing strategy.
      */
     fun calculateTotalPrice(basketId: String): Int {
         val basket = basketRepository.findById(basketId)

@@ -14,7 +14,7 @@ class PricingRulesSpec extends Specification {
         }
         def applicableOffers = [offer]
 
-        when: 'the pricing for that item is retrieved'
+        when: 'the pricing strategy for that item is retrieved'
         def pricing = new PricingRules(applicableOffers).getPricingStrategy(item)
 
         then: 'it is the special offer pricing'
@@ -28,7 +28,7 @@ class PricingRulesSpec extends Specification {
         def item = new StockItem('id', 'sku', 20)
         def applicableOffers = []
 
-        when: 'the pricing for that item is retrieved'
+        when: 'the pricing strategy for that item is retrieved'
         def pricing = new PricingRules(applicableOffers).getPricingStrategy(item)
 
         then: 'it is the standard pricing'

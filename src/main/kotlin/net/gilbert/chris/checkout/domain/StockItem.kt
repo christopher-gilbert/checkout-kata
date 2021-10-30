@@ -7,8 +7,7 @@ import java.util.UUID.randomUUID
  * Simple representation of an item that may be purchased in the supermarket.
  */
 @VisibleForTesting
-data class StockItem
-    (
+data class StockItem(
     val id: String = randomUUID().toString(),
     val sku: String,
     private val unitPrice: Int

@@ -3,8 +3,7 @@ package net.gilbert.chris.checkout.domain
 import net.gilbert.chris.checkout.annotation.VisibleForTesting
 
 /**
- * Business rule factory for finding the correct pricing strategy for a
- * [StockItem] in light of any applicable offers.
+ * Business rule factory for finding the correct pricing strategy for a [StockItem] in light of any applicable offers.
  */
 @VisibleForTesting
 data class PricingRules(

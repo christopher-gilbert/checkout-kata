@@ -27,11 +27,11 @@ The controller as implemented does not provide RESTful semantics - to do so woul
 ### Domain 
 The domain model is used across layers from the service interface down. 
 
-I have not separated out entity classes, I have simply detached 'persisted' instances to avoid uncontrolled modification of 'stored' representations of the domain. 
+I have not separated out entity classes from the domain classes, I have simply detached 'persisted' instances to avoid uncontrolled modification of 'stored' representations of the domain. 
 This avoids a proliferation of different representations of the domain, and mapping between them.
 This would generally also be the case in a more realistic implementation, where either an ORM would map the domain, or it could be serialised/deserialised to a representation suitable for a key/value store.    
 
-Domain objects are mapped to DTOs in the controller for safety to avoid uncontrolled binding to properties such as price etc.
+Domain objects *are* mapped to DTOs in the controller for safety to avoid uncontrolled binding to properties such as price etc.
 However, the use of DTOs is really for illustrative purposes - the controller only takes in simple values and so could safely expose the domain model.
 
 Pricing is retained in units that do not relate to any specific currency until presented to the view.
@@ -52,12 +52,14 @@ This makes sense in the case of Baskets, but less so for StockItems and SpecialO
 It is really to cover a point specifically made in the exercise about ensuring clients refer to SKU rather than item ID, and is redundant in the current implementation.
 However, in reality, if these entities were persisted, it is reasonable to assume a unique ID as it is likely that any updates may be soft updates in order to view consistent historical data and hence SKU would not be unique.
 
-Note that the basket is persisted after each item addition. There are two reasons for adding this slight complexity (rather than just maintaining a Basket object in memory):
+## Service
+
+The CheckoutService persists the basket after each item is added. There are two reasons for adding this slight complexity (rather than just maintaining a Basket object in memory):
   * in a clustered environment, in-memory means each update to the basket could see a different view of its current state
   * even in a single server, a temporary outage would mean state is lost and the cashier would have to start again!
 An alternative would be to retain the Basket state on the client, but then we would not have persisted Baskets available for future analysis.
 
-The StockItem and SpecialOffer repositories do not expose any functions for maintaining items, they can only be added, which is sufficient for the exercise.
+The StockPriceManagementService does not provide any functions for maintaining items, nor do the associated repositories expose any such functions, stock items and special offers can only be added, which is sufficient for the exercise.
 
 ### Defensive Coding
 To avoid uncontrolled modification of 'persisted' domain objects I took the following steps:
@@ -81,7 +83,6 @@ To avoid uncontrolled modification of 'persisted' domain objects I took the foll
 * CheckoutService#addItem throws application exception if the basket doesn't exist, but IllegalArgumentException if the stock item doesn't exist. 
   This keeps the code more fluent but is inconsistent - it isn't as trivial as I thought to just override the Kotlin requireNotNull functionality. 
   It would be simple to ensure a consistent result, but slightly more tricky to do it elegantly. 
-* The BasketRepository exposes separate functions for creating or updating a Basket, with exceptions when client code breaks the contract of those functions. There could instead be a single save function that carries out an upsert operation. 
 * Allowing setting of offers in the controller to override stored offers. It would be straightforward to do this, and is supported by the service interface.
 
 ## Suggested Additional Functionality

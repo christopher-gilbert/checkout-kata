@@ -10,7 +10,7 @@ interface PricingStrategy {
 
 
     /**
-     * Return the price for a quantity of items as a number of some currency.
+     * Return the price for a quantity of items as a simple amount of some (unspecified) currency.
      */
     fun priceOf(quantity: Int): Int
 

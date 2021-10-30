@@ -16,7 +16,7 @@ data class Basket(
 ) {
 
     /**
-     * Returns the [Basket] updated with the new [StockItem] added.
+     * Return the [Basket] updated with the new [StockItem] added.
      */
     fun addItem(stockItem: StockItem): Basket {
         items.add(stockItem)
@@ -24,7 +24,7 @@ data class Basket(
     }
 
     /**
-     * Provides a summary map of distinct [StockItems][StockItem] to the number of each in the basket.
+     * Provide a summary map of distinct [StockItems][StockItem] to the number of each in the basket.
      */
     fun getSummary() = items.groupingBy { it }.eachCount()
 
@@ -35,7 +35,7 @@ data class Basket(
     fun applyPricingRules(stockItem: StockItem) = applicablePricingRules.getPricingStrategy(stockItem)
 
     /**
-     * Create a copy of the basket with mutable properties deep copied for safety
+     * Create a copy of the basket with properties that could be modified deep copied for safety.
      */
     fun copy() = copy(
         items = this.items
