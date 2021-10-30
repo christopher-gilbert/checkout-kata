@@ -2,7 +2,6 @@ package net.gilbert.chris.checkout.repository
 
 import net.gilbert.chris.checkout.annotation.VisibleForTesting
 import net.gilbert.chris.checkout.domain.SpecialOffer
-import java.util.UUID.randomUUID
 
 @VisibleForTesting
 class SpecialOfferRepository

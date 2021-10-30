@@ -35,7 +35,7 @@ class CheckoutService(
         basketRepository.save(Basket(applicablePricingRules = PricingRules(applicableOffers)))
 
     /**
-     * Add the [StockItem] identified by the SKU to the [Basket] and return a new [Basket], if the SKU
+     * Add the [StockItem] identified by the SKU to the [Basket] and return the updated basket, if the SKU
      * is valid, else throw [IllegalArgumentException]
      */
     fun addItem(sku: String, basketId: String) =
@@ -49,6 +49,8 @@ class CheckoutService(
      * Calculates a total price for all the [StockItems]][StockItem] in the [Basket] in pence, accounting
      * for any [SpecialOffers][SpecialOffer] that are applicable to the items based on the set of offers
      * associated with the basket at the start of checkout.
+     *
+     * WARNING - this assumes that each type of item in the basket has a unique pricing strategy
      */
     fun calculateTotalPrice(basketId: String): Int {
         val basket = basketRepository.findById(basketId)
@@ -56,8 +58,8 @@ class CheckoutService(
         return basket
             .getSummary()
             .mapKeys { (item) -> basket.applyPricingRules(item) }
-            .map { (itemPricing, quantity) ->
-                itemPricing.priceOf(quantity)
+            .map { (pricingStrategy, quantity) ->
+                pricingStrategy.priceOf(quantity)
             }
             .sum()
     }

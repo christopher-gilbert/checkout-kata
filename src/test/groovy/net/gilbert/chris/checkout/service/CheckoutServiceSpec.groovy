@@ -4,6 +4,7 @@ import net.gilbert.chris.checkout.domain.Basket
 import net.gilbert.chris.checkout.domain.PricingRules
 import net.gilbert.chris.checkout.domain.SpecialOffer
 import net.gilbert.chris.checkout.domain.StockItem
+import net.gilbert.chris.checkout.repository.BasketRepository
 import net.gilbert.chris.checkout.repository.SpecialOfferRepository
 import net.gilbert.chris.checkout.repository.StockItemRepository
 import spock.lang.Specification
@@ -19,12 +20,17 @@ class CheckoutServiceSpec extends Specification {
             it.currentSpecialOffers >> [offer1, offer2]
         }
 
+        and: 'storage for baskets'
+        def basketRepository = Stub(BasketRepository) {
+            save(_ as Basket) >> { args -> args[0] }
+        }
+
         when: 'a new checkout is started'
-        def basket = new CheckoutService(Stub(StockItemRepository), specialOfferRepository)
+        def basket = new CheckoutService(Stub(StockItemRepository), specialOfferRepository, basketRepository)
                 .startCheckout()
 
         then: 'an empty basket is created with those special offers'
-        basket.currentPricingRules == new PricingRules([offer1, offer2])
+        basket.applicablePricingRules == new PricingRules([offer1, offer2])
         basket.items == []
     }
 
@@ -34,12 +40,17 @@ class CheckoutServiceSpec extends Specification {
         def offer1 = Stub(SpecialOffer)
         def offer2 = Stub(SpecialOffer)
 
+        and: 'storage for baskets'
+        def basketRepository = Stub(BasketRepository) {
+            save(_ as Basket) >> { args -> args[0] }
+        }
+
         when: 'a new checkout is started with those offers'
-        def basket = new CheckoutService(Stub(StockItemRepository), Stub(SpecialOfferRepository))
+        def basket = new CheckoutService(Stub(StockItemRepository), Stub(SpecialOfferRepository), basketRepository)
                 .startCheckout([offer1, offer2])
 
         then: 'an empty basket is created with those special offers'
-        basket.currentPricingRules == new PricingRules([offer1, offer2])
+        basket.applicablePricingRules == new PricingRules([offer1, offer2])
         basket.items == []
     }
 
@@ -47,7 +58,10 @@ class CheckoutServiceSpec extends Specification {
     def "Empty basket - known item scanned"() {
 
         given: 'an empty basket'
-        def basket = new Basket(Stub(PricingRules), [])
+        def basket = new Basket('id1', Stub(PricingRules), [])
+        def basketRepository = Stub(BasketRepository) {
+            findById('id1') >> basket
+        }
 
         and: 'an item with a known SKU'
         def item = Stub(StockItem)
@@ -56,11 +70,13 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .addItem('SKU', basket)
+        basketRepository.update(basket) >> basket
+        def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), basketRepository)
+                .addItem('SKU', 'id1')
 
         then: 'the item is added to the basket'
         updatedBasket.items == [item]
+
     }
 
     def "Basket with existing items - known item scanned"() {
@@ -68,9 +84,12 @@ class CheckoutServiceSpec extends Specification {
         given: 'a non-empty basket'
         def item1 = Stub(StockItem)
         def item2 = Stub(StockItem)
-        def basket = new Basket(Stub(PricingRules), [])
+        def basket = new Basket('id1', Stub(PricingRules), [])
                 .addItem(item1)
                 .addItem(item2)
+        def basketRepository = Mock(BasketRepository) {
+            findById('id1') >> basket
+        }
 
         and: 'an item with a known SKU'
         def item3 = Stub(StockItem)
@@ -79,8 +98,9 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .addItem('SKU', basket)
+        basketRepository.update(basket) >> basket
+        def updatedBasket = new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), basketRepository)
+                .addItem('SKU', 'id1')
 
         then: 'the item is added to the basket'
         updatedBasket.items == [item1, item2, item3]
@@ -89,7 +109,10 @@ class CheckoutServiceSpec extends Specification {
     def "Unknown item scanned"() {
 
         given: 'an empty basket'
-        def basket = new Basket(Stub(PricingRules), [])
+        def basket = new Basket('id1', Stub(PricingRules), [])
+        def basketRepository = Mock(BasketRepository) {
+            findById('id1') >> basket
+        }
 
         and: 'an unknown SKU'
         def stockItemRepository = Stub(StockItemRepository) {
@@ -97,8 +120,8 @@ class CheckoutServiceSpec extends Specification {
         }
 
         when: 'the SKU is scanned'
-        new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository))
-                .addItem('SKU', basket)
+        new CheckoutService(stockItemRepository, Stub(SpecialOfferRepository), basketRepository)
+                .addItem('SKU', 'id1')
 
         then: 'an exception is thrown'
         thrown(IllegalArgumentException)
@@ -106,10 +129,40 @@ class CheckoutServiceSpec extends Specification {
     }
 
     def "Calculating price of basket"() {
-        // as this is wholly dependent on behaviour of collaborators, it is checked by integration test,
-        // rather than stubbing the various interactions, which would tightly couple this test to the implementation
+
+        given: 'some items with simple pricing strategies'
+        def item1 = Stub(StockItem) {
+            priceOf(3) >> 7
+        }
+        def item2 = Stub(StockItem) {
+            priceOf(5) >> 11
+        }
+        def item3 = Stub(StockItem) {
+            priceOf(2) >> 19
+
+        }
+
+        and: 'a stored basket containing those items in expected quantities'
+
+        def basket = Stub(Basket) {
+            it.id >> 'id1'
+            getSummary() >> [(item1): 3,
+                             (item2): 5,
+                             (item3): 2]
+            applyPricingRules(_ as StockItem) >> { args -> args[0] }
+        }
+        def basketRepository = Stub(BasketRepository) {
+            findById('id1') >> basket
+        }
+
+        when: 'the baskeet total is calculated'
+        def total = new CheckoutService(Stub(StockItemRepository),
+                Stub(SpecialOfferRepository),
+                basketRepository).calculateTotalPrice('id1')
+
+        then: 'it is correct based on the rules and pricing strategy and basket contents'
+        total == 7 + 11 + 19
 
     }
-
 
 }

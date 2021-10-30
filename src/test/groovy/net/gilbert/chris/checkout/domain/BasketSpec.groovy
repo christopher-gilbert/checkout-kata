@@ -14,10 +14,7 @@ class BasketSpec extends Specification {
         def item = Stub(StockItem)
         def updatedBasket = basket.addItem(item)
 
-        then: 'a new basket is returned'
-        !updatedBasket.is(basket)
-
-        and: 'the new basket contains the added item'
+        then: 'the basket contains the added item'
         updatedBasket.items == [item]
 
     }
@@ -32,10 +29,7 @@ class BasketSpec extends Specification {
         def item2 = Stub(StockItem)
         def updatedBasket = basket.addItem(item2)
 
-        then: 'a new basket is returned'
-        !updatedBasket.is(basket)
-
-        and: 'the new basket contains both items'
+        then: 'the basket contains both items'
         updatedBasket.items == [item1, item2]
 
     }
@@ -54,6 +48,22 @@ class BasketSpec extends Specification {
         summary[itemType1] == 4
         summary[itemType2] == 3
 
+    }
 
+    def "Copy basket"() {
+
+        given: 'a basket'
+        def item1 = new StockItem('id1', 'sku1', 45)
+        def specialOffer1 = new SpecialOffer('id2', item1, 3, 120)
+        def originalBasket = new Basket('id3', new PricingRules([specialOffer1]), [item1])
+
+        and: 'a copy of the basket'
+        def copyBasket = originalBasket.copy()
+
+        when: 'the original is modified (in the only way allowed)'
+        originalBasket.addItem(Stub(StockItem))
+
+        then: 'the copy is unchanged'
+        copyBasket == new Basket('id3', new PricingRules([specialOffer1]), [item1])
     }
 }

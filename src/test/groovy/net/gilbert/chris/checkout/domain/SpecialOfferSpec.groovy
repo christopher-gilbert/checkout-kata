@@ -1,7 +1,5 @@
 package net.gilbert.chris.checkout.domain
 
-import net.gilbert.chris.checkout.domain.SpecialOffer
-import net.gilbert.chris.checkout.domain.StockItem
 import spock.lang.Specification
 
 class SpecialOfferSpec extends Specification {

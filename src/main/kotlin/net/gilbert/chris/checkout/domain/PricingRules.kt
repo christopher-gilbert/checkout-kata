@@ -12,10 +12,10 @@ data class PricingRules(
 ) {
 
     /**
-     * Retrieve the [ItemPricing] that enables the total cost for a quantity of the passed in
+     * Retrieve the [PricingStrategy] that enables the total cost for a quantity of the passed in
      * [StockItem] to be calculated, accounting for any applicable [SpecialOffers][SpecialOffer].
      */
-    fun getItemPricing(stockItem: StockItem) =
+    fun getPricingStrategy(stockItem: StockItem) =
         applicableOffers.find {
             it.stockItem == stockItem
         } ?: stockItem
