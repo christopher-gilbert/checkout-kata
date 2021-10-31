@@ -17,7 +17,7 @@ I have aimed to strike a reasonable balance where code is simple but there may b
 
 ### View
 The controller is not actively available outside the execution of tests and so does not provide real endpoints or rendered views in response to requests. 
-To do so with core Java, which precludes even the Servlet API (part of Jakarta EE), would need a ServerSocket binding to port 80 and manual parsing of the HTTP protocol - fun maybe, but outside the remit and definitely oveer-complex (and that is before we consider TLS).  
+To do so with core Java, which precludes even the Servlet API (part of Jakarta EE), would need a ServerSocket binding to port 80 and manual parsing of the HTTP protocol - fun maybe, but outside the remit and definitely over-complex (and that is before we consider TLS).  
 
 Instead, the controller is exercised by an integration test (src/test/groovy/net/gilbert/chris/checkout/EndToEndTest.groovy) that models a typical set of calls from a client accessing some view on the controller. 
 
