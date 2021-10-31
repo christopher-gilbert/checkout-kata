@@ -35,7 +35,7 @@ data class Basket(
     fun applyPricingRules(stockItem: StockItem) = applicablePricingRules.getPricingStrategy(stockItem)
 
     /**
-     * Create a copy of the basket with properties that could be modified deep copied for safety.
+     * Create a copy of the basket with a deep copy of properties that could be modified, for safety.
      */
     fun copy() = copy(
         items = this.items

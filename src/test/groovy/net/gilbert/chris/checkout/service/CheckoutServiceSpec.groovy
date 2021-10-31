@@ -34,27 +34,6 @@ class CheckoutServiceSpec extends Specification {
         basket.items == []
     }
 
-    def "Start a new checkout with custom special offers"() {
-
-        given: 'a set of special offers'
-        def offer1 = Stub(SpecialOffer)
-        def offer2 = Stub(SpecialOffer)
-
-        and: 'storage for baskets'
-        def basketRepository = Stub(BasketRepository) {
-            save(_ as Basket) >> { args -> args[0] }
-        }
-
-        when: 'a new checkout is started with those offers'
-        def basket = new CheckoutService(Stub(StockItemRepository), Stub(SpecialOfferRepository), basketRepository)
-                .startCheckout([offer1, offer2])
-
-        then: 'an empty basket is created with those special offers'
-        basket.applicablePricingRules == new PricingRules([offer1, offer2])
-        basket.items == []
-    }
-
-
     def "Empty basket - known item scanned"() {
 
         given: 'an empty basket'
@@ -143,7 +122,6 @@ class CheckoutServiceSpec extends Specification {
         }
 
         and: 'a stored basket containing those items in expected quantities'
-
         def basket = Stub(Basket) {
             it.id >> 'id1'
             getSummary() >> [(item1): 3,

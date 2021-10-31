@@ -17,7 +17,7 @@ class PricingRulesSpec extends Specification {
         when: 'the pricing strategy for that item is retrieved'
         def pricing = new PricingRules(applicableOffers).getPricingStrategy(item)
 
-        then: 'it is the special offer pricing'
+        then: 'it is the special offer implementation'
         pricing == offer
 
     }
@@ -31,7 +31,7 @@ class PricingRulesSpec extends Specification {
         when: 'the pricing strategy for that item is retrieved'
         def pricing = new PricingRules(applicableOffers).getPricingStrategy(item)
 
-        then: 'it is the standard pricing'
+        then: 'it is the standard implementation'
         pricing == item
     }
 

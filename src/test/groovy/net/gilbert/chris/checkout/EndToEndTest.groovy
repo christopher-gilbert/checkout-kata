@@ -15,47 +15,48 @@ class EndToEndTest extends Specification {
 
     def "Checkout a typical basket"() {
 
-        given: 'a stock database'
+        given: 'a store of stock items and special offers'
         def stockItemRepository = new StockItemRepository()
         def specialOfferRepository = new SpecialOfferRepository()
-
-        and: 'a set of stored stock items'
-        def priceService = new StockPriceManagementService(
+        def priceManagementService = new StockPriceManagementService(
                 stockItemRepository, specialOfferRepository
         )
-        priceService.addStockItem('A', 50)
-        priceService.addStockItem('B', 30)
-        priceService.addStockItem('C', 20)
-        priceService.addStockItem('D', 15)
+
+        and: 'a set of stored stock items'
+        with(priceManagementService) {
+            addStockItem('A', 50)
+            addStockItem('B', 30)
+            addStockItem('C', 20)
+            addStockItem('D', 15)
+        }
 
         and: 'some special offers on some of them'
-        priceService.addSpecialOffer('A', 3, 130)
-        priceService.addSpecialOffer('B', 2, 45)
+        with(priceManagementService) {
+            addSpecialOffer('A', 3, 130)
+            addSpecialOffer('B', 2, 45)
+        }
 
-        and: 'an API to access stock'
-        def basketRepository = new BasketRepository()
+        and: 'an API to access the checkout process'
         def checkoutService = new CheckoutService(
-                stockItemRepository, specialOfferRepository, basketRepository
+                stockItemRepository, specialOfferRepository, new BasketRepository()
         )
         def checkoutController = new CheckoutController(checkoutService, new BasketMapper(), new SterlingMapper())
 
-        and: 'a new basket'
+        when: 'a new checkout is started'
         def basketId = checkoutController.createBasket().basketId
 
-        when: 'a selection of items is added to the basket'
+        and: 'a selection of items is added to the basket'
         with(checkoutController) {
             scanItem('A', basketId)
             scanItem('D', basketId)
             scanItem('A', basketId)
             scanItem('A', basketId)
+            scanItem('B', basketId)
             scanItem('A', basketId)
+            scanItem('C', basketId)
             scanItem('B', basketId)
-            scanItem('B', basketId)
             scanItem('C', basketId)
             scanItem('C', basketId)
-            scanItem('C', basketId)
-
-
         }
 
         and: 'the total price is calculated'
@@ -68,6 +69,66 @@ class EndToEndTest extends Specification {
         // D -> 1 * 15
         finalBill == new Sterling(3, 0)
 
+    }
+
+    def "Checkout a typical basket - offers modified during checkout"() {
+
+        given: 'a store of stock items and special offers'
+        def stockItemRepository = new StockItemRepository()
+        def specialOfferRepository = new SpecialOfferRepository()
+        def priceManagementService = new StockPriceManagementService(
+                stockItemRepository, specialOfferRepository
+        )
+
+        and: 'a set of stored stock items'
+        with(priceManagementService) {
+            addStockItem('A', 50)
+            addStockItem('B', 30)
+            addStockItem('C', 20)
+            addStockItem('D', 15)
+        }
+
+        and: 'some special offers on some of them'
+        with(priceManagementService) {
+            addSpecialOffer('A', 3, 130)
+            addSpecialOffer('B', 2, 45)
+        }
+
+        and: 'an API to access the checkout process'
+        def checkoutService = new CheckoutService(
+                stockItemRepository, specialOfferRepository, new BasketRepository()
+        )
+        def checkoutController = new CheckoutController(checkoutService, new BasketMapper(), new SterlingMapper())
+
+        when: 'a new checkout is started'
+        def basketId = checkoutController.createBasket().basketId
+
+        and: 'a selection of items is added to the basket'
+        with(checkoutController) {
+            scanItem('A', basketId)
+            scanItem('D', basketId)
+            scanItem('A', basketId)
+            scanItem('A', basketId)
+            scanItem('B', basketId)
+            scanItem('A', basketId)
+            scanItem('C', basketId)
+            scanItem('B', basketId)
+            scanItem('C', basketId)
+            scanItem('C', basketId)
+        }
+
+        and: 'a new offer is applied to one of the items'
+        priceManagementService.addSpecialOffer('C', 3, 50)
+
+        and: 'the total price is calculated'
+        def finalBill = checkoutController.getTotalPrice(basketId)
+
+        then: 'the total is not based on the addedd offer'
+        // A -> 130 + 50
+        // B -> 45
+        // C -> 3 * 20
+        // D -> 1 * 15
+        finalBill == new Sterling(3, 0)
 
     }
 

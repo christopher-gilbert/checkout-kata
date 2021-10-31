@@ -25,7 +25,7 @@ class BasketSpec extends Specification {
         def item1 = Stub(StockItem)
         def basket = new Basket('id', Stub(PricingRules), [item1])
 
-        when: 'an item is added'
+        when: 'another item is added'
         def item2 = Stub(StockItem)
         def updatedBasket = basket.addItem(item2)
 
@@ -35,12 +35,13 @@ class BasketSpec extends Specification {
     }
 
     def "Summary view of basket"() {
+
         given: 'a basket containing several items, some identical'
         def itemType1 = new StockItem('id1', 'sku1', 10)
         def itemType2 = new StockItem('id2', 'sku2', 20)
         def basket = new Basket('id', Stub(PricingRules), [itemType1, itemType1, itemType2, itemType1, itemType2, itemType2, itemType1])
 
-        when: 'a grouped view is requested'
+        when: 'a summary view is requested'
         def summary = basket.getSummary()
 
         then: 'it includes correct quantities of distinct item types'

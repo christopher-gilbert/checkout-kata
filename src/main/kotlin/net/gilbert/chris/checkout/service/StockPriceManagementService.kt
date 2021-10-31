@@ -37,7 +37,6 @@ class StockPriceManagementService(
      * unless an offer already exists for the same [StockItem] in which case a [DuplicateItemException] is thrown, or
      * there is no [StockItem] with that SKU, in which case a [MissingItemException] is thrown.
      */
-
     fun addSpecialOffer(stockItemSku: String, bundleQuantity: Int, bundlePrice: Int): SpecialOffer {
         if (specialOfferRepository.findOfferForStockItem(stockItemSku) != null) {
             throw DuplicateItemException("A special offer already exists for the stock item with sku $stockItemSku")

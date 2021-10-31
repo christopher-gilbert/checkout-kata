@@ -6,7 +6,7 @@ class SpecialOfferSpec extends Specification {
 
     def "Pricing of items on offer"() {
 
-        expect: 'special offer pricing to be applied'
+        expect: 'special offer pricing strategy to be applied'
         def totalPrice = new SpecialOffer('id1', new StockItem('id1', 'A', unitPrice), offerQuantity, offerPrice)
                 .priceOf(quantity)
         totalPrice == expectedTotal

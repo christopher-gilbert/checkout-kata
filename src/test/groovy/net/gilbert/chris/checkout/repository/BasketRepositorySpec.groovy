@@ -21,7 +21,7 @@ class BasketRepositorySpec extends Specification {
         !input.is(stored)
         !output.is(stored)
 
-        and: 'it is the same as the input'
+        and: 'the stored basket is the same as the input'
         stored == input
 
     }
@@ -43,7 +43,7 @@ class BasketRepositorySpec extends Specification {
         !input.is(stored)
         !output.is(stored)
 
-        and: 'it is the same as the input'
+        and: 'the stored basket is the same as the input'
         stored == input
 
     }

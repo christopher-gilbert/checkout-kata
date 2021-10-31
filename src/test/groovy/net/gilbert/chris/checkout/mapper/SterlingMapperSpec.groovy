@@ -10,7 +10,7 @@ class SterlingMapperSpec extends Specification {
         given: 'less than 100 pennies'
         def pennies = 35
 
-        when: 'it is mapped to a Sterling amount'
+        when: 'they are mapped to a Sterling amount'
         def result = new SterlingMapper().penceToSterling(pennies)
 
         then: 'there are no pounds and the right number of pence'
@@ -20,10 +20,10 @@ class SterlingMapperSpec extends Specification {
 
     def "No pennies"() {
 
-        given: 'a number of pennies that adds up to an exact number of pounds'
+        given: 'a number of pennies that add up to an exact number of pounds'
         def pennies = 600
 
-        when: 'it is mapped to a Sterling amount'
+        when: 'they are mapped to a Sterling amount'
         def result = new SterlingMapper().penceToSterling(pennies)
 
         then: 'there are no pennies and the right number of pounds'
@@ -33,10 +33,10 @@ class SterlingMapperSpec extends Specification {
 
     def "Pounds and pence"() {
 
-        given: 'more than 100 pennies that does not add up to an exact number of pounds'
+        given: 'more than 100 pennies that do not add up to an exact number of pounds'
         def pennies = 1797
 
-        when: 'it is mapped to a Sterling amount'
+        when: 'they are mapped to a Sterling amount'
         def result = new SterlingMapper().penceToSterling(pennies)
 
         then: 'there are the right number of pennies and the right number of pounds'

@@ -12,9 +12,12 @@ Full details are not shared here as they are not intended to be publicly availab
 ### General
 For this simple model I have implemented code from a controller layer down to entities 'persisted' in memory as Lists or Maps of objects. 
 
+Although an artificial repository layer might be considered an over-complication, there is a slight conflict between the requirement for simplicity and the requirement to handle edge cases, loading of SKUs, insulating baskets from frequently changing rules etc.
+I have aimed to strike a reasonable balance where code is simple but there may be extra layers that are not required.
+
 ### View
-As this kata specifically avoids any frameworks and is limited to what is available in core Java the controller is not hooked up to any active listening view - 
-to do so in core Java would preclude even the Servlet API as that is part of Jakarta EE and so I would be looking at a ServerSocket binding to port 80 and manually parsing the HTTP protocol - fun maybe, but outside the remit I feel (and that is before we consider TLS).  
+The controller is not actively available outside the execution of tests and so does not provide real endpoints or rendered views in response to requests. 
+To do so with core Java, which precludes even the Servlet API (part of Jakarta EE), would need a ServerSocket binding to port 80 and manual parsing of the HTTP protocol - fun maybe, but outside the remit and definitely oveer-complex (and that is before we consider TLS).  
 
 Instead, the controller is exercised by an integration test (src/test/groovy/net/gilbert/chris/checkout/EndToEndTest.groovy) that models a typical set of calls from a client accessing some view on the controller. 
 
@@ -28,8 +31,6 @@ The controller as implemented does not provide RESTful semantics - to do so woul
 The domain model is used across layers from the service interface down. 
 
 I have not separated out entity classes from the domain classes, I have simply detached 'persisted' instances to avoid uncontrolled modification of 'stored' representations of the domain. 
-This avoids a proliferation of different representations of the domain, and mapping between them.
-This would generally also be the case in a more realistic implementation, where either an ORM would map the domain, or it could be serialised/deserialised to a representation suitable for a key/value store.    
 
 Domain objects *are* mapped to DTOs in the controller for safety to avoid uncontrolled binding to properties such as price etc.
 However, the use of DTOs is really for illustrative purposes - the controller only takes in simple values and so could safely expose the domain model.
@@ -45,11 +46,11 @@ The repository layer simply maintains in-memory instances of domain objects. It 
 * SpecialOffers are retrieved with their associated StockItems - similar to how you might pull them from a relational database with JPA.
 * The Basket is modelled in a way that does not lend itself to an object/relational mapping, because of the way associated stock items are individually listed. This would be more suited to a key value store where the basket may be marshalled into a single representation without associations with other relations.
 
-As I am in the privileged position of not having any real persistence, I have taken the liberty of using an approach that feels intuitive and allows me to fulfil the requirements of the exercise (demonstrating use of streaming API etc) .
+As I am in the position of not having any real persistence, I have taken the liberty of using an approach that feels intuitive and allows me to fulfil the requirements of the exercise (demonstrating use of streaming API etc).
 
 I have assigned IDs to the persisted entities separate from other potentially unique identifiers (such as SKUs). 
 This makes sense in the case of Baskets, but less so for StockItems and SpecialOffers, at least within the requirements of this exercise. 
-It is really to cover a point specifically made in the exercise about ensuring clients refer to SKU rather than item ID, and is redundant in the current implementation.
+It is really to cover a point specifically made in the exercise about ensuring clients refer to SKU code rather than ID, and is redundant in the current implementation.
 However, in reality, if these entities were persisted, it is reasonable to assume a unique ID as it is likely that any updates may be soft updates in order to view consistent historical data and hence SKU would not be unique.
 
 ## Service
@@ -57,9 +58,8 @@ However, in reality, if these entities were persisted, it is reasonable to assum
 The CheckoutService persists the basket after each item is added. There are two reasons for adding this slight complexity (rather than just maintaining a Basket object in memory):
   * in a clustered environment, in-memory means each update to the basket could see a different view of its current state
   * even in a single server, a temporary outage would mean state is lost and the cashier would have to start again!
-An alternative would be to retain the Basket state on the client, but then we would not have persisted Baskets available for future analysis.
 
-The StockPriceManagementService does not provide any functions for maintaining items, nor do the associated repositories expose any such functions, stock items and special offers can only be added, which is sufficient for the exercise.
+The StockPriceManagementService does not provide any functions for maintaining items, nor do the associated repositories expose any such functions. Stock items and special offers can only be added, which is sufficient for the exercise.
 
 ### Defensive Coding
 To avoid uncontrolled modification of 'persisted' domain objects I took the following steps:
@@ -67,14 +67,15 @@ To avoid uncontrolled modification of 'persisted' domain objects I took the foll
 * Baskets *are* mutable, but the 'persisted' instance is never exposed to code outside the repository. Although the instances that are exposed are not fully deep copies, they are designed to avoid directly exposing any properties that can be modified. 
 
 ## Assumptions and Simplifications
-* Although the instruction is to keep things simple, the exercise does mention using entities etc, implying that it should be more of a simulation of a real application. 
+* Although the instruction is to keep things simple, the exercise does mention using entities etc, implying that it should be more of a simulation of a real end to end application. 
   I have tried to strike the right balance of simple functions and functionality along with addressing some of the important considerations and design decisions of a real application. 
 * No basket is expected to contain items where the total price in pennies exceeds the maximum Integer value.
 * The original kata mentions 'the main method' but apart from running through a sample interaction I think a main method would only prove useful if it was to start up some kind of process listening on a port, which as mentioned I think is out of scope, and hence I assume the integration test covers the intended role of a main method.
+  An alternative interpretation might be that th total price calculation is the 'main' method.
 * Offers are associated with the basket at the time of checkout - ideally this would be on entering the supermarket - else on arriving at checkout the offers may not be as advertised when filling the physical basket. 
   In reality I would expect offers to be updated out of shop opening times for this reason. 
 * In several places I use Lists where Sets would do - this just makes testing a bit easier for this simple exercise.
-* The exercise mentions the ability to set pricing rules at the start of checkout. This capability is included in the service layer but not used, as the end to end test sets up all the offers at the start of checking out anyway.
+* The exercise mentions the ability to set pricing rules at the start of checkout. I have taken this to mean that pricing and special offers added at the start are not affected by subsequent changes.
 
 ## Suggested Improvements (to existing code)
 * In this implementation the SpecialOffer is explicitly a multi-buy. 
@@ -83,7 +84,7 @@ To avoid uncontrolled modification of 'persisted' domain objects I took the foll
 * CheckoutService#addItem throws application exception if the basket doesn't exist, but IllegalArgumentException if the stock item doesn't exist. 
   This keeps the code more fluent but is inconsistent - it isn't as trivial as I thought to just override the Kotlin requireNotNull functionality. 
   It would be simple to ensure a consistent result, but slightly more tricky to do it elegantly. 
-* Allowing setting of offers in the controller to override stored offers. It would be straightforward to do this, and is supported by the service interface.
+* Saving the basket on addition of each item addition is probably a bit outside the simple requirements, so I'd be tempted to ditch that, which would be a small simplification, and just explain here the problems it addresses as a potential improvement.
 
 ## Suggested Additional Functionality
 * I have not included any additional (but expected) properties in the domain model such as stock item name etc. To do so would involve unnecessary assumptions about these properties (eg is name a simple property, or is it made up of brand, product, size)
