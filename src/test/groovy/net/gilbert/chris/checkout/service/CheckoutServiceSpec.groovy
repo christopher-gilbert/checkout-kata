@@ -127,7 +127,7 @@ class CheckoutServiceSpec extends Specification {
             getSummary() >> [(item1): 3,
                              (item2): 5,
                              (item3): 2]
-            applyPricingRules(_ as StockItem) >> { args -> args[0] }
+            getPricingStrategy(_ as StockItem) >> { args -> args[0] }
         }
         def basketRepository = Stub(BasketRepository) {
             findById('id1') >> basket

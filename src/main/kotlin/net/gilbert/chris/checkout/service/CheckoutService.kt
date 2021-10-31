@@ -47,7 +47,7 @@ class CheckoutService(
             ?: throw MissingItemException("basket with ID $basketId does not exist")
         return basket
             .getSummary()
-            .map { (item, quantity) -> basket.applyPricingRules(item).priceOf(quantity) }
+            .map { (item, quantity) -> basket.getPricingStrategy(item).priceOf(quantity) }
             .sum()
     }
 

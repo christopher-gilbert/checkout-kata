@@ -32,7 +32,7 @@ data class Basket(
      * Use the [PricingRules] tied to this basket to retrieve the appropriate pricing strategy for the
      * given [StockItem].
      */
-    fun applyPricingRules(stockItem: StockItem) = applicablePricingRules.getPricingStrategy(stockItem)
+    fun getPricingStrategy(stockItem: StockItem) = applicablePricingRules.getPricingStrategy(stockItem)
 
     /**
      * Create a copy of the basket with a deep copy of properties that could be modified, for safety.
